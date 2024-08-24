@@ -109,7 +109,6 @@ local config = require("nvim-treesitter.configs")
 config.setup({
     ensure_installed = { "lua", "go", "javascript", "python", "rust"},
     highlight = { enable = true },
-    indent = { enable = true },  
 })
 -- set up my rose pine
 require("rose-pine").setup({

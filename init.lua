@@ -1,4 +1,3 @@
-
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 vim.opt.number = true
@@ -62,6 +61,7 @@ local plugins = {
         -- or                              , branch = '0.1.x',
         dependencies = { 'nvim-lua/plenary.nvim' }
     },
+    { 'machakann/vim-highlightedyank', event = 'TextYankPost' },
     {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
     {
         "williamboman/mason.nvim"
@@ -107,9 +107,12 @@ local builtin = require("telescope.builtin")
 
 local config = require("nvim-treesitter.configs")
 config.setup({
-    ensure_installed = { "lua", "go", "javascript", "python", "rust"},
+    ensure_installed = {},
     highlight = { enable = true },
 })
+-- how to configure machakann/vim-highlightedyan
+vim.g.highlightedyank_highlight_duration = 70 
+
 -- set up my rose pine
 require("rose-pine").setup({
     variant = "moon", -- auto, main, moon, or dawn
@@ -306,6 +309,10 @@ vim.g.ale_linters = {
 
 local mark = require("harpoon.mark")
 local ui = require("harpoon.ui")
+
+
+--my plugin
+require("jacklovesyou")
 
 --key maps 
 vim.keymap.set('n', "<leader>a", mark.add_file)

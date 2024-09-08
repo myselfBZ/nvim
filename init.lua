@@ -96,7 +96,7 @@ local plugins = {
     {
         "theprimeagen/harpoon"
 
-    }
+    },
    
 }
 local opts = {}
@@ -165,15 +165,15 @@ require("rose-pine").setup({
 
     pallete = {
         -- Override the builtin palette per variant
-        -- moon = {
-        --     base = '#18191a',
-        --     overlay = '#363738',
-        -- },
+        moon = {
+            base = '#18191a',
+            overlay = '#363738',
+        },
     },
-
+    
     highlight_groups = {
         -- Comment = { fg = "foam" },
-        -- VertSplit = { fg = "muted", bg = "muted" },
+        VertSplit = { fg = "muted", bg = "muted" },
     },
 
     before_highlight = function(group, highlight, palette)
@@ -198,6 +198,7 @@ require("mason-lspconfig").setup{
         "tsserver",
         "pyright",
         "gopls",
+        "lua_ls",
     }
 }
 
@@ -251,6 +252,15 @@ lsp_config.tsserver.setup{
     capabilities = capabilities
 }
 
+lsp_config.clangd.setup{
+    on_attach = on_attach,
+    capabilities = capabilities
+}
+
+lsp_config.lua_ls.setup{
+    on_attach = on_attach,
+    capabilities = capabilities
+}
 
 -- This is your opts table
 require("telescope").setup {
@@ -313,27 +323,29 @@ local ui = require("harpoon.ui")
 
 --my plugin
 require("jacklovesyou")
-
 --key maps 
 vim.keymap.set('n', "<leader>a", mark.add_file)
 vim.keymap.set('n', "<C-e>", ui.toggle_quick_menu)
 vim.keymap.set('n', "<C-h>",function() ui.nav_file(1) end)
 vim.keymap.set('n', "<C-t>",  function() ui.nav_file(2) end)
 vim.keymap.set('n', "<C-n>", function() ui.nav_file(3) end)
-vim.keymap.set('n', "<C-s>",  function() ui.nav_file(4) end)
+vim.keymap.set('n', "<leader>s",  function() ui.nav_file(4) end)
 vim.keymap.set('n', '<leader>gs', vim.cmd.Git)
 vim.keymap.set('n', '<leader>b', "<cmd>q!<CR>")
 vim.keymap.set('n', '<leader>w', vim.cmd.wq)
-vim.keymap.set('n', '<C-f>', vim.cmd.w)
+vim.keymap.set('n', '<C-f>', vim.cmd.wa)
 vim.api.nvim_set_keymap('n', '<leader>hl', 'ihttp://localhost:<Esc>', { noremap = true, silent = true })
 vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
-vim.keymap.set('n', '<C-p>', builtin.find_files, {})
+vim.keymap.set('n', '<C-p>', builtin.git_files, {})
+vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
 vim.keymap.set('n', '<leader>pg', builtin.live_grep, {})
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
 vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, {})
 vim.keymap.set("v", "<leader>y", "\"+y")
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 vim.api.nvim_set_keymap('n', '<leader>h', ':nohlsearch<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<C-c>', '<Esc>:w<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<C-c>', '<Esc>:wa<CR>', { noremap = true, silent = true })
 
+vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 

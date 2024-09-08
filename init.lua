@@ -97,7 +97,13 @@ local plugins = {
         "theprimeagen/harpoon"
 
     },
-   
+    {
+        'windwp/nvim-autopairs',
+        event = "InsertEnter",
+        config = true
+        -- use opts = {} for passing setup options
+        -- this is equivalent to setup({}) function
+    },
 }
 local opts = {}
 require("lazy").setup(plugins, opts)

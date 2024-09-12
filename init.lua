@@ -2,6 +2,9 @@ vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 vim.opt.number = true
 -- sets 
+
+
+
 vim.opt.guicursor = ""
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
@@ -15,10 +18,6 @@ vim.opt.updatetime = 50
 vim.opt.termguicolors = true
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
-
-
-
-
 
 vim.opt.tabstop = 4
 
@@ -47,17 +46,26 @@ end
 vim.opt.rtp:prepend(lazypath)
 local plugins = {
     -- For lazy.nvim
+    {
+        "tiagovla/tokyodark.nvim",
+        opts = {
+            -- custom options here
+        },
+        config = function(_, opts)
+            require("tokyodark").setup(opts) -- calling setup is optional
+            vim.cmd [[colorscheme tokyodark]]
+        end,
+    },
     { 'nvim-tree/nvim-web-devicons' },
 
-    -- install rose pine
-    {
-        'rose-pine/neovim'
-    },
     {
         'nvim-telescope/telescope.nvim', tag = '0.1.6',
         -- or                              , branch = '0.1.x',
         dependencies = { 'nvim-lua/plenary.nvim' }
     },
+    {"lewis6991/gitsigns.nvim"},
+    {'feline-nvim/feline.nvim'},
+    {"Hitesh-Aggarwal/feline_one_monokai.nvim"},
     { 'machakann/vim-highlightedyank', event = 'TextYankPost' },
     {"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
     {
@@ -110,6 +118,7 @@ local plugins = {
 }
 local opts = {}
 require("lazy").setup(plugins, opts)
+
 require('nvim-web-devicons').setup { default = true }
 require('nvim-tree').setup {
   renderer = {
@@ -123,96 +132,19 @@ require('nvim-tree').setup {
     },
   },
 }
-
+require('feline').setup()
+require('feline').winbar.setup()
 local builtin = require("telescope.builtin")
 
 -- This is your opts table
 
 local config = require("nvim-treesitter.configs")
 config.setup({
-    ensure_installed = {},
+    ensure_installed = {"python", "go", "javascript", "lua", "rust", "c"},
     highlight = { enable = true },
 })
 -- how to configure machakann/vim-highlightedyan
-vim.g.highlightedyank_highlight_duration = 70 
-
--- set up my rose pine
-require("rose-pine").setup({
-    variant = "moon", -- auto, main, moon, or dawn
-    dark_variant = "main", -- main, moon, or dawn
-    dim_inactive_windows = false,
-    extend_background_behind_borders = true,
-
-    enable = {
-        terminal = true,
-        legacy_highlights = true, -- Improve compatibility for previous versions of Neovim
-        migrations = true, -- Handle deprecated options automatically
-    },
-
-    styles = {
-        bold = true,
-        italic = true,
-        transparency = true,
-    },
-
-    groups = {
-        border = "muted",
-        link = "iris",
-        panel = "surface",
-
-        error = "love",
-        hint = "iris",
-        info = "foam",
-        note = "pine",
-        todo = "rose",
-        warn = "gold",
-
-        git_add = "foam",
-        git_change = "rose",
-        git_delete = "love",
-        git_dirty = "rose",
-        git_ignore = "muted",
-        git_merge = "iris",
-        git_rename = "pine",
-        git_stage = "iris",
-        git_text = "rose",
-        git_untracked = "subtle",
-
-        h1 = "iris",
-        h2 = "foam",
-        h3 = "rose",
-        h4 = "gold",
-        h5 = "pine",
-        h6 = "foam",
-    },
-
-    pallete = {
-        -- Override the builtin palette per variant
-        moon = {
-            base = '#18191a',
-            overlay = '#363738',
-        },
-    },
-    highlight_groups = {
-        -- Comment = { fg = "foam" },
-        VertSplit = { fg = "muted", bg = "muted" },
-    },
-
-    before_highlight = function(group, highlight, palette)
-        -- Disable all undercurls
-        -- if highlight.undercurl then
-        --     highlight.undercurl = false
-        -- end
-        --
-        -- Change palette colour
-        -- if highlight.fg == palette.pine then
-        --     highlight.fg = palette.foam
-        -- end
-    end,
-})
-
-vim.cmd("colorscheme rose-pine")
-vim.cmd("colorscheme rose-pine-main")
+vim.g.highlightedyank_highlight_duration = 90 
 --vim.cmd("colorscheme rose-pine-dawn") 
 require("mason").setup()
 require("mason-lspconfig").setup{
@@ -224,8 +156,7 @@ require("mason-lspconfig").setup{
     }
 }
 
-
-
+require('gitsigns').setup()
 
 local lsp_config = require("lspconfig")
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
@@ -350,7 +281,7 @@ vim.keymap.set('n', "<leader>a", mark.add_file)
 vim.keymap.set('n', "<C-e>", ui.toggle_quick_menu)
 vim.keymap.set('n', "<C-h>",function() ui.nav_file(1) end)
 vim.keymap.set('n', "<C-t>",  function() ui.nav_file(2) end)
-vim.keymap.set('n', "<C-n>", function() ui.nav_file(3) end)
+vim.keymap.set('n', "<leader>n", function() ui.nav_file(3) end)
 vim.keymap.set('n', "<leader>s",  function() ui.nav_file(4) end)
 vim.keymap.set('n', '<leader>gs', vim.cmd.Git)
 vim.keymap.set('n', '<leader>b', "<cmd>q!<CR>")
@@ -365,8 +296,10 @@ vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
 vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, {})
 vim.keymap.set("v", "<leader>y", "\"+y")
 vim.api.nvim_set_keymap('n', '<leader>h', ':nohlsearch<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<C-c>', '<Esc>:wa<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>')
 vim.keymap.set('n', '<leader>e', ':NvimTreeFindFile<CR>')
+vim.keymap.set("i", "<C-c>", "<Esc>:wa<CR>", { noremap = true, silent = false })
+
+
 
 

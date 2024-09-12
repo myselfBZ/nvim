@@ -12,7 +12,7 @@ vim.opt.relativenumber = true
 vim.opt.incsearch = true
 vim.opt.scrolloff = 8
 vim.opt.updatetime = 50
-
+vim.opt.termguicolors = true
 
 
 
@@ -43,15 +43,9 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 local plugins = {
-    {
-        'Exafunction/codeium.vim',
-        config = function ()
-            vim.keymap.set('i', '<C-g>', function () return vim.fn['codeium#Accept']() end, { expr = true, silent = true })
-            vim.keymap.set('i', '<c-;>', function() return vim.fn['codeium#CycleCompletions'](1) end, { expr = true, silent = true })
-            vim.keymap.set('i', '<c-,>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true, silent = true })
-            vim.keymap.set('i', '<c-x>', function() return vim.fn['codeium#Clear']() end, { expr = true, silent = true })
-        end
-    },
+    -- For lazy.nvim
+    { 'nvim-tree/nvim-web-devicons' },
+
     -- install rose pine
     {
         'rose-pine/neovim'
@@ -107,6 +101,9 @@ local plugins = {
 }
 local opts = {}
 require("lazy").setup(plugins, opts)
+require('nvim-web-devicons').setup { default = true }
+
+
 local builtin = require("telescope.builtin")
 
 -- This is your opts table
@@ -133,9 +130,9 @@ require("rose-pine").setup({
     },
 
     styles = {
-        bold = false,
-        italic = false,
-        transparency = false,
+        bold = true,
+        italic = true,
+        transparency = true,
     },
 
     groups = {
@@ -176,7 +173,6 @@ require("rose-pine").setup({
             overlay = '#363738',
         },
     },
-    
     highlight_groups = {
         -- Comment = { fg = "foam" },
         VertSplit = { fg = "muted", bg = "muted" },
@@ -352,6 +348,4 @@ vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 vim.api.nvim_set_keymap('n', '<leader>h', ':nohlsearch<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('i', '<C-c>', '<Esc>:wa<CR>', { noremap = true, silent = true })
 
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 

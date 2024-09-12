@@ -13,6 +13,9 @@ vim.opt.incsearch = true
 vim.opt.scrolloff = 8
 vim.opt.updatetime = 50
 vim.opt.termguicolors = true
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 
 
 
@@ -98,11 +101,28 @@ local plugins = {
         -- use opts = {} for passing setup options
         -- this is equivalent to setup({}) function
     },
+    {
+        'nvim-tree/nvim-tree.lua',
+        requires = {
+            'nvim-tree/nvim-web-devicons', -- optional, for file icons
+        }
+    },
 }
 local opts = {}
 require("lazy").setup(plugins, opts)
 require('nvim-web-devicons').setup { default = true }
-
+require('nvim-tree').setup {
+  renderer = {
+    icons = {
+      show = {
+        file = true,
+        folder = true,
+        folder_arrow = true,
+        git = true,
+      },
+    },
+  },
+}
 
 local builtin = require("telescope.builtin")
 
@@ -197,7 +217,7 @@ vim.cmd("colorscheme rose-pine-main")
 require("mason").setup()
 require("mason-lspconfig").setup{
     ensure_installed = {
-        "tsserver",
+        "ts_ls",
         "pyright",
         "gopls",
         "lua_ls",
@@ -248,7 +268,7 @@ lsp_config.gopls.setup{
     on_attach = on_attach,
     capabilities = capabilities
 }
-lsp_config.tsserver.setup{
+lsp_config.ts_ls.setup{
 
     on_attach = on_attach,
     capabilities = capabilities
@@ -344,8 +364,9 @@ vim.keymap.set('n', '<leader>pg', builtin.live_grep, {})
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
 vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, {})
 vim.keymap.set("v", "<leader>y", "\"+y")
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 vim.api.nvim_set_keymap('n', '<leader>h', ':nohlsearch<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('i', '<C-c>', '<Esc>:wa<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>')
+vim.keymap.set('n', '<leader>e', ':NvimTreeFindFile<CR>')
 
 

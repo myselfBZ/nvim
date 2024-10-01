@@ -2,7 +2,7 @@ vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 vim.opt.number = true
 -- sets 
-
+require("jacklovesyou").love()
 
 
 vim.opt.guicursor = ""
@@ -16,8 +16,6 @@ vim.opt.incsearch = true
 vim.opt.scrolloff = 8
 vim.opt.updatetime = 50
 vim.opt.termguicolors = true
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
 
 vim.opt.tabstop = 4
 
@@ -109,29 +107,11 @@ local plugins = {
         -- use opts = {} for passing setup options
         -- this is equivalent to setup({}) function
     },
-    {
-        'nvim-tree/nvim-tree.lua',
-        requires = {
-            'nvim-tree/nvim-web-devicons', -- optional, for file icons
-        }
-    },
 }
 local opts = {}
 require("lazy").setup(plugins, opts)
 
 require('nvim-web-devicons').setup { default = true }
-require('nvim-tree').setup {
-  renderer = {
-    icons = {
-      show = {
-        file = true,
-        folder = true,
-        folder_arrow = true,
-        git = true,
-      },
-    },
-  },
-}
 require('feline').setup()
 require('feline').winbar.setup()
 local builtin = require("telescope.builtin")
@@ -296,10 +276,6 @@ vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
 vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, {})
 vim.keymap.set("v", "<leader>y", "\"+y")
 vim.api.nvim_set_keymap('n', '<leader>h', ':nohlsearch<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>')
-vim.keymap.set('n', '<leader>e', ':NvimTreeFindFile<CR>')
 vim.keymap.set("i", "<C-c>", "<Esc>:wa<CR>", { noremap = true, silent = false })
-
-
-
+vim.keymap.set("n", "<leader>pv", ":Ex<CR>", { noremap = true, silent = true })
 

@@ -2,8 +2,7 @@ vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 vim.opt.number = true
 -- sets 
-require("jacklovesyou").love()
-
+require("jakelovesyou").love()
 
 vim.opt.guicursor = ""
 vim.opt.hlsearch = false
@@ -244,18 +243,17 @@ cmp.setup({
         { name = 'luasnip' },
     }, {
         { name = 'buffer' },
+        { name = "path" },
     })
+
 })
-vim.g.ale_linters = {
-    rust = {'cargo', 'rls', 'rustc'}
-}
 
 local mark = require("harpoon.mark")
 local ui = require("harpoon.ui")
 
 
 --my plugin
-require("jacklovesyou")
+require("jakelovesyou")
 --key maps 
 vim.keymap.set('n', "<leader>a", mark.add_file)
 vim.keymap.set('n', "<C-e>", ui.toggle_quick_menu)
@@ -278,4 +276,4 @@ vim.keymap.set("v", "<leader>y", "\"+y")
 vim.api.nvim_set_keymap('n', '<leader>h', ':nohlsearch<CR>', { noremap = true, silent = true })
 vim.keymap.set("i", "<C-c>", "<Esc>:wa<CR>", { noremap = true, silent = false })
 vim.keymap.set("n", "<leader>pv", ":Ex<CR>", { noremap = true, silent = true })
-
+vim.keymap.set("n", "<leader>t", ":tabf ", { noremap = true, silent = false })

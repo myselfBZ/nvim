@@ -1,10 +1,12 @@
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 vim.opt.number = true
 -- sets 
 require("jakelovesyou").love()
 
-vim.opt.guicursor = ""
+-- vim.opt.guicursor = ""
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 vim.opt.timeout = true
@@ -43,16 +45,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 local plugins = {
     -- For lazy.nvim
-    {
-        "tiagovla/tokyodark.nvim",
-        opts = {
-            -- custom options here
-        },
-        config = function(_, opts)
-            require("tokyodark").setup(opts) -- calling setup is optional
-            vim.cmd [[colorscheme tokyodark]]
-        end,
-    },
     { 'nvim-tree/nvim-web-devicons' },
 
     {
@@ -81,6 +73,12 @@ local plugins = {
         'hrsh7th/nvim-cmp'
     },
     {
+        'hrsh7th/cmp-path'
+    },
+    {
+        'hrsh7th/cmp-buffer'
+    },
+    {
         'L3MON4D3/LuaSnip'
     },
     {
@@ -90,7 +88,10 @@ local plugins = {
         'rafamadriz/friendly-snippets'
     },
     {
-        'hrsh7th/cmp-nvim-lsp'                                                                                                           
+        'hrsh7th/cmp-nvim-lsp'
+    },
+    {
+        "nvim-tree/nvim-tree.lua"
     },
     {
         'tpope/vim-fugitive'
@@ -135,6 +136,19 @@ require("mason-lspconfig").setup{
     }
 }
 
+--file tree
+require("nvim-tree").setup({
+  sort = {
+    sorter = "case_sensitive",
+  },
+  view = {
+    width = 30,
+  },
+  renderer = {
+    group_empty = true,
+  },
+})
+
 require('gitsigns').setup()
 
 local lsp_config = require("lspconfig")
@@ -174,7 +188,13 @@ lsp_config.rust_analyzer.setup{
     capabilities = capabilities
 }
 lsp_config.gopls.setup{
-
+    settings = {
+        gopls = {
+            analyses = {
+                fieldaligment = true
+            }
+        }
+    },
     on_attach = on_attach,
     capabilities = capabilities
 }
@@ -214,6 +234,22 @@ cmp.setup({
             require('luasnip').lsp_expand(args.body)
         end,
     },
+    -- formatting = {
+    --     format = function(entry, vim_item)
+    --         -- Customize how the items are displayed in the completion menu
+    --         vim_item.kind = string.format("%s", vim_item.kind)  -- Add icons to the completion item (optional)
+    --         return vim_item
+    --     end,
+    -- },
+
+    window = {
+        completion = {
+            border = {"╭", "─", "╮", "│", "╯", "─", "╰", "│"},  -- Add a border around the completion window
+        },
+        documentation = {
+            border = {"╭", "─", "╮", "│", "╯", "─", "╰", "│"},  -- Border for documentation popup
+        },
+    },
     mapping = cmp.mapping.preset.insert({
         ['<C-b>'] = cmp.mapping.scroll_docs(-4),
         ['<C-f>'] = cmp.mapping.scroll_docs(4),
@@ -241,9 +277,8 @@ cmp.setup({
     sources = cmp.config.sources({
         { name = 'nvim_lsp' },
         { name = 'luasnip' },
-    }, {
+        { name = 'path' },
         { name = 'buffer' },
-        { name = "path" },
     })
 
 })
@@ -275,5 +310,8 @@ vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, {})
 vim.keymap.set("v", "<leader>y", "\"+y")
 vim.api.nvim_set_keymap('n', '<leader>h', ':nohlsearch<CR>', { noremap = true, silent = true })
 vim.keymap.set("i", "<C-c>", "<Esc>:wa<CR>", { noremap = true, silent = false })
-vim.keymap.set("n", "<leader>pv", ":Ex<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>pv", ":NvimTreeFocus<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>t", ":tabf ", { noremap = true, silent = false })
+vim.keymap.set("n", "<leader>fm", ":!gofmt -w .<CR>", { noremap = true, silent = true })
+--vim.api.nvim_set_hl(0, "Normal", { bg="none" })
+--vim.api.nvim_set_hl(0, "NormalFloat", { bg="none" })

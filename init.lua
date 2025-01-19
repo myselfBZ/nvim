@@ -1,32 +1,5 @@
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
-vim.opt.number = true
--- sets 
-require("jakelovesyou").love()
+require("jakelovesyou")
 
--- vim.opt.guicursor = ""
-vim.opt.hlsearch = false
-vim.opt.incsearch = true
-vim.opt.timeout = true
-vim.opt.timeoutlen = 300
-vim.opt.ttimeoutlen = 0
-vim.opt.relativenumber = true
-vim.opt.incsearch = true
-vim.opt.scrolloff = 8
-vim.opt.updatetime = 50
-vim.opt.termguicolors = true
-
-vim.opt.tabstop = 4
-
-vim.opt.shiftwidth = 4
-
-vim.opt.expandtab = true
-
-vim.opt.smartindent = true
-vim.g.mapleader = " "
-vim.opt.autoindent = true
 --Lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -53,6 +26,7 @@ local plugins = {
         dependencies = { 'nvim-lua/plenary.nvim' }
     },
     {"lewis6991/gitsigns.nvim"},
+    {"rose-pine/neovim"},
     {'feline-nvim/feline.nvim'},
     {"Hitesh-Aggarwal/feline_one_monokai.nvim"},
     { 'machakann/vim-highlightedyank', event = 'TextYankPost' },
@@ -124,8 +98,85 @@ config.setup({
     highlight = { enable = true },
 })
 -- how to configure machakann/vim-highlightedyan
-vim.g.highlightedyank_highlight_duration = 90 
---vim.cmd("colorscheme rose-pine-dawn") 
+vim.g.highlightedyank_highlight_duration = 90
+-- my colors
+require("rose-pine").setup({
+    variant = "auto", -- auto, main, moon, or dawn
+    dark_variant = "main", -- main, moon, or dawn
+    dim_inactive_windows = false,
+    extend_background_behind_borders = true,
+
+    enable = {
+        terminal = true,
+        legacy_highlights = true, -- Improve compatibility for previous versions of Neovim
+        migrations = true, -- Handle deprecated options automatically
+    },
+
+    styles = {
+        bold = false,
+        italic = true,
+        transparency = false,
+    },
+
+    groups = {
+        border = "muted",
+        link = "iris",
+        panel = "surface",
+
+        error = "love",
+        hint = "iris",
+        info = "foam",
+        note = "pine",
+        todo = "rose",
+        warn = "gold",
+
+        git_add = "foam",
+        git_change = "rose",
+        git_delete = "love",
+        git_dirty = "rose",
+        git_ignore = "muted",
+        git_merge = "iris",
+        git_rename = "pine",
+        git_stage = "iris",
+        git_text = "rose",
+        git_untracked = "subtle",
+
+        h1 = "iris",
+        h2 = "foam",
+        h3 = "rose",
+        h4 = "gold",
+        h5 = "pine",
+        h6 = "foam",
+    },
+
+    palette = {
+        -- Override the builtin palette per variant
+        -- moon = {
+        --     base = '#18191a',
+        --     overlay = '#363738',
+        -- },
+    },
+
+    highlight_groups = {
+        -- Comment = { fg = "foam" },
+        -- VertSplit = { fg = "muted", bg = "muted" },
+    },
+
+    before_highlight = function(group, highlight, palette)
+        -- Disable all undercurls
+        -- if highlight.undercurl then
+        --     highlight.undercurl = false
+        -- end
+        --
+        -- Change palette colour
+        -- if highlight.fg == palette.pine then
+        --     highlight.fg = palette.foam
+        -- end
+    end,
+})
+
+vim.cmd("colorscheme rose-pine")
+
 require("mason").setup()
 require("mason-lspconfig").setup{
     ensure_installed = {
@@ -173,6 +224,20 @@ local on_attach = function(client, bufnr)
     buf_map(bufnr, 'n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>')
 end
 
+-- Enhance LSP floating window appearance
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
+
+vim.diagnostic.config({
+    update_in_insert = true,
+    float = {
+        border = "rounded",
+        source = "always",
+        style = "minimal",
+        header = "",
+        prefix = ""
+    },
+})
 
 
 
@@ -211,7 +276,14 @@ lsp_config.clangd.setup{
 
 lsp_config.lua_ls.setup{
     on_attach = on_attach,
-    capabilities = capabilities
+    capabilities = capabilities,
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = {"vim"}
+            }
+        }
+    }
 }
 
 -- This is your opts table
@@ -287,8 +359,6 @@ local mark = require("harpoon.mark")
 local ui = require("harpoon.ui")
 
 
---my plugin
-require("jakelovesyou")
 --key maps 
 vim.keymap.set('n', "<leader>a", mark.add_file)
 vim.keymap.set('n', "<C-e>", ui.toggle_quick_menu)

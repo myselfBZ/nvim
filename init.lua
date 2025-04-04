@@ -382,6 +382,9 @@ vim.api.nvim_set_keymap('n', '<leader>h', ':nohlsearch<CR>', { noremap = true, s
 vim.keymap.set("i", "<C-c>", "<Esc>:wa<CR>", { noremap = true, silent = false })
 vim.keymap.set("n", "<leader>pv", ":NvimTreeFocus<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>t", ":tabf ", { noremap = true, silent = false })
-vim.keymap.set("n", "<leader>fm", ":!gofmt -w .<CR>", { noremap = true, silent = true })
+-- vim.keymap.set("n", "<leader>fm", ":!gofmt -w .<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
+
+
 --vim.api.nvim_set_hl(0, "Normal", { bg="none" })
 --vim.api.nvim_set_hl(0, "NormalFloat", { bg="none" })

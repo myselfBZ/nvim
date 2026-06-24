@@ -78,9 +78,7 @@ local plugins = {
         'windwp/nvim-autopairs',
         event = "InsertEnter",
         config = true
-        -- use opts = {} for passing setup options
-        -- this is equivalent to setup({}) function
-    },
+    }
 }
 local opts = {}
 require("lazy").setup(plugins, opts)
@@ -225,41 +223,83 @@ local on_attach = function(client, bufnr)
 end
 
 -- Enhance LSP floating window appearance
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
+local function short_message(msg, maxlen)
+  maxlen = maxlen or 120
+  -- collapse newlines, trim leading/trailing spaces
+  msg = msg:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+  if #msg > maxlen then
+    return msg:sub(1, maxlen - 1) .. "…"
+  end
+  return msg
+end
 
+-- diagnostic global config
 vim.diagnostic.config({
-    update_in_insert = true,
-    float = {
-        border = "rounded",
-        source = "always",
-        style = "minimal",
-        header = "",
-        prefix = ""
-    },
+  virtual_text = {
+    spacing = 2,
+    -- show shortened virtual_text (inline) messages
+    format = function(diag)
+      return short_message(diag.message, 80)
+    end,
+  },
+  underline = true,
+  signs = true,
+  update_in_insert = false,
+  severity_sort = true,
+  float = {
+    -- rounded border and size limits for diagnostic float
+    border = "rounded",
+    focusable = false,
+    max_width = 80,
+    max_height = 20,
+    source = "if_many",
+    -- format the diagnostic shown in the float
+    format = function(diag)
+      -- include source and code if available, but keep message short
+      local s = diag.source and ("[" .. diag.source .. "] ") or ""
+      if diag.code then s = s .. "(" .. tostring(diag.code) .. ") " end
+      s = s .. short_message(diag.message, 200)
+      return s
+    end,
+  },
 })
 
+-- apply rounded borders (and optional max_width) to other LSP floating handlers
+local with_opts = function(handler, opts)
+  return vim.lsp.with(handler, opts)
+end
 
+vim.lsp.handlers["textDocument/hover"] = with_opts(
+  vim.lsp.handlers.hover,
+  { border = "rounded", max_width = 80 }
+)
 
+vim.lsp.handlers["textDocument/signatureHelp"] = with_opts(
+  vim.lsp.handlers.signature_help,
+  { border = "rounded", max_width = 80 }
+)
 
+-- shorten window/showMessage (client -> server notifications shown as float)
+vim.lsp.handlers["window/showMessage"] = function(_, result, ctx)
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
+  local message = result.message or ""
+  vim.notify(short_message(message, 200), result.type or vim.log.levels.INFO, {
+    title = client and client.name or "LSP",
+    timeout = 3000,
+  })
+end
 
 lsp_config.pyright.setup{
     on_attach = on_attach,
     capabilities = capabilities
 }
+
 lsp_config.rust_analyzer.setup{
 
     on_attach = on_attach,
     capabilities = capabilities
 }
 lsp_config.gopls.setup{
-    settings = {
-        gopls = {
-            analyses = {
-                fieldaligment = true
-            }
-        }
-    },
     on_attach = on_attach,
     capabilities = capabilities
 }
@@ -315,12 +355,8 @@ cmp.setup({
     -- },
 
     window = {
-        completion = {
-            border = {"╭", "─", "╮", "│", "╯", "─", "╰", "│"},  -- Add a border around the completion window
-        },
-        documentation = {
-            border = {"╭", "─", "╮", "│", "╯", "─", "╰", "│"},  -- Border for documentation popup
-        },
+        completion =  cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered()
     },
     mapping = cmp.mapping.preset.insert({
         ['<C-b>'] = cmp.mapping.scroll_docs(-4),
